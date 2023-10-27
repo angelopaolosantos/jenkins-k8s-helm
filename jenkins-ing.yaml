@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  creationTimestamp: "2023-10-27T00:41:19Z"
+  generation: 1
+  name: jenkins
+  namespace: jenkins
+  resourceVersion: "13728"
+  uid: 6008d6bf-a14c-46f8-a61c-c1ee5cf26562
+  annotations: 
+          # add an annotation indicating the issuer to use.
+          cert-manager.io/cluster-issuer: ca-issuer
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: jenkins.localdev.me
+    http:
+      paths:
+      - backend:
+          service:
+            name: jenkins
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+  tls: # < placing a host in the TLS config will determine what ends up in the cert's subjectAltNames
+  - hosts:
+    - jenkins.localdev.me
+    secretName: jenkins-cert # < cert-manager will store the created certificate in this secret.
+status:
+  loadBalancer: {}
